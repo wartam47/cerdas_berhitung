@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cerdas Berhitung - SMPN 4 Majenang</title>
+    <title>Cerdas Berhitung</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome -->
@@ -63,13 +63,12 @@
             <!-- Form Cek Data (Hidden Initially) -->
             <div id="check-form" class="hidden space-y-4">
                 <div class="text-center mb-4">
-                    <h3 class="text-lg font-bold text-gray-800">Verifikasi Siswa</h3>
+                    <h3 class="text-lg font-bold text-gray-800">Verifikasi Data</h3>
                     <p class="text-xs text-gray-500">Masukkan Nama Lengkap atau Asal Sekolah</p>
                 </div>
                 
                 <div class="relative">
                     <i class="fas fa-user absolute left-4 top-3.5 text-gray-400"></i>
-                    <!-- Placeholder diperbaiki -->
                     <input type="text" id="search-input" placeholder="Ketik Nama / Nama Sekolah..." class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all">
                 </div>
 
@@ -100,8 +99,9 @@
                     <i class="fas fa-user-graduate"></i>
                 </div>
                 <div>
-                    <h2 class="text-xl font-bold text-gray-800">Halo, Pelajar!</h2>
-                    <p class="text-sm text-gray-500">Silakan pilih materi pembelajaran hari ini.</p>
+                    <!-- ID DITAMBAHKAN DISINI UNTUK GANTI NAMA -->
+                    <h2 id="greeting-text" class="text-xl font-bold text-gray-800">Halo, Pelajar!</h2>
+                    <p class="text-sm text-gray-500">Silakan pilih menu yang ada</p>
                 </div>
             </div>
             <button onclick="logout()" class="px-4 py-2 bg-red-50 text-red-500 hover:bg-red-100 rounded-lg text-sm font-bold transition-colors">
@@ -126,7 +126,7 @@
             { 
                 id: 2, 
                 title: "Penjumlahan", 
-                desc: "Latihan tambah-tambahan dasar",
+                desc: "Mengasah keterampilan berhitung operasi penjumlahan",
                 icon: "fa-plus", 
                 color: "bg-blue-500", 
                 bg: "bg-blue-50",
@@ -136,7 +136,7 @@
             { 
                 id: 3, 
                 title: "Pengurangan", 
-                desc: "Latihan pengurangan bilangan",
+                desc: "Mengasah keterampilan berhitung operasi pengurangan",
                 icon: "fa-minus", 
                 color: "bg-orange-500", 
                 bg: "bg-orange-50",
@@ -146,7 +146,7 @@
             { 
                 id: 4, 
                 title: "Perkalian", 
-                desc: "Hafalan dan latihan perkalian",
+                desc: "Mengasah keterampilan berhitung operasi perkalian",
                 icon: "fa-times", 
                 color: "bg-purple-500", 
                 bg: "bg-purple-50",
@@ -156,7 +156,7 @@
             { 
                 id: 5, 
                 title: "Pembagian", 
-                desc: "Belajar membagi angka",
+                desc: "Mengasah keterampilan berhitung operasi pembagian",
                 icon: "fa-divide", 
                 color: "bg-pink-500", 
                 bg: "bg-pink-50",
@@ -166,7 +166,7 @@
             { 
                 id: 6, 
                 title: "Kompetisi", 
-                desc: "Balapan Mobil Matematika",
+                desc: "Mengasah keterampilan berhitung secara kolaboratif",
                 icon: "fa-trophy", 
                 color: "bg-yellow-500", 
                 bg: "bg-yellow-50",
@@ -183,6 +183,7 @@
         const searchInput = document.getElementById('search-input');
         const feedbackMsg = document.getElementById('feedback-msg');
         const btnVerify = document.getElementById('btn-verify');
+        const greetingText = document.getElementById('greeting-text');
 
         // --- FUNGSI NAVIGASI UI ---
 
@@ -227,12 +228,20 @@
         function switchToDashboard() {
             authSection.classList.add('hidden');
             dashboardSection.classList.remove('hidden');
+            
+            // UPDATE NAMA PENGGUNA DISINI
+            const savedName = localStorage.getItem('mathAppName') || "Pelajar";
+            // Pastikan format huruf kapital di awal kata (Capitalize)
+            const formattedName = savedName.replace(/\b\w/g, l => l.toUpperCase());
+            greetingText.innerText = `Halo, ${formattedName}!`;
+            
             renderDashboard();
             localStorage.setItem('mathAppAuth', 'true');
         }
 
         function logout() {
             localStorage.removeItem('mathAppAuth');
+            localStorage.removeItem('mathAppName'); // Hapus nama saat logout
             location.reload();
         }
 
@@ -241,7 +250,6 @@
         async function verifyUser() {
             const query = searchInput.value.trim().toLowerCase();
             if (!query) {
-                // Perbaikan Pesan Validasi
                 showFeedback("Harap masukkan Nama atau Sekolah!", "red");
                 return;
             }
@@ -252,19 +260,22 @@
             btnVerify.disabled = true;
 
             try {
-                // Menggunakan Google Visualization API Query untuk mengambil data publik
-                // Sheet harus berstatus "Anyone with the link can view"
+                // Menggunakan Google Visualization API Query
                 const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${SHEET_NAME}`;
                 
                 const response = await fetch(url);
                 if (!response.ok) throw new Error("Gagal mengambil data");
                 
                 const csvText = await response.text();
-                const found = parseAndSearchCSV(csvText, query);
+                // Sekarang menerima kembali NAMA jika ditemukan
+                const foundName = parseAndSearchCSV(csvText, query);
 
-                if (found) {
-                    showFeedback("Data ditemukan! Mengalihkan...", "green");
-                    setTimeout(switchToDashboard, 1000);
+                if (foundName) {
+                    // Simpan nama yang ditemukan ke Local Storage
+                    localStorage.setItem('mathAppName', foundName);
+                    
+                    showFeedback(`Data ditemukan! Selamat datang, ${foundName}`, "green");
+                    setTimeout(switchToDashboard, 1500);
                 } else {
                     showFeedback(`Data "${searchInput.value}" tidak ditemukan.`, "red");
                     btnVerify.innerHTML = originalBtnContent;
@@ -279,28 +290,29 @@
             }
         }
 
-        // Fungsi parsing CSV sederhana untuk mencari di Kolom A dan B
+        // Fungsi parsing diperbarui untuk mengembalikan NAMA (bukan hanya true/false)
         function parseAndSearchCSV(csvText, query) {
-            // Split baris
             const rows = csvText.split('\n');
             
-            // Loop setiap baris (mulai index 0 atau 1 tergantung ada header atau tidak)
             for (let i = 0; i < rows.length; i++) {
-                // Hapus tanda kutip CSV standar ("data")
                 let rowData = rows[i].replace(/"/g, '').split(',');
                 
                 if (rowData.length >= 2) {
-                    const colA = rowData[0] ? rowData[0].trim().toLowerCase() : ""; // Kolom A: Nama
-                    const colB = rowData[1] ? rowData[1].trim().toLowerCase() : ""; // Kolom B: Sekolah
+                    // Ambil data asli untuk ditampilkan nanti
+                    const realName = rowData[0] ? rowData[0].trim() : "";
+                    const realSchool = rowData[1] ? rowData[1].trim() : "";
+
+                    // Data versi huruf kecil untuk pencarian
+                    const colA = realName.toLowerCase(); 
+                    const colB = realSchool.toLowerCase(); 
                     
-                    // Cek kecocokan (menggunakan includes agar pencarian sekolah lebih fleksibel)
-                    // Contoh: Input "SMP Negeri 4" akan cocok dengan "SMP Negeri 4 Majenang"
+                    // Jika cocok dengan Nama ATAU Sekolah
                     if (colA === query || (colB.length > 3 && colB.includes(query))) {
-                        return true;
+                        return realName; // KEMBALIKAN NAMA ASLINYA
                     }
                 }
             }
-            return false;
+            return null; // Tidak ditemukan
         }
 
         function showFeedback(msg, colorType) {
@@ -316,12 +328,10 @@
 
         // --- INIT ---
         document.addEventListener("DOMContentLoaded", () => {
-            // Cek jika user sudah pernah login sebelumnya
             if (localStorage.getItem('mathAppAuth') === 'true') {
                 switchToDashboard();
             }
 
-            // Tambahkan event enter pada input
             searchInput.addEventListener("keypress", function(event) {
                 if (event.key === "Enter") {
                     event.preventDefault();
