@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cerdas Berhitung</title>
+    <title>Cerdas Berhitung - SMPN 4 Majenang</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Nunito:wght@400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <style>
         body { font-family: 'Nunito', sans-serif; }
@@ -22,15 +22,59 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        /* Custom Scrollbar for list */
-        .custom-scroll::-webkit-scrollbar { width: 6px; }
-        .custom-scroll::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
+        /* Kelas untuk tombol terkunci */
+        .btn-locked {
+            background-color: #e2e8f0 !important; /* slate-200 */
+            color: #94a3b8 !important; /* slate-400 */
+            border-color: #cbd5e1 !important; /* slate-300 */
+            cursor: not-allowed;
+            pointer-events: none;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        /* Modal Overlay */
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(2px);
+        }
+
+        /* Loader Animation */
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 3px solid #ffffff;
+            width: 20px;
+            height: 20px;
+            -webkit-animation: spin 1s linear infinite; /* Safari */
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Custom Scrollbar */
+        .custom-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+            border-radius: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex flex-col items-center justify-center p-4">
 
     <!-- BAGIAN 1: VERIFIKASI / INTRO (Default View) -->
-    <div id="auth-section" class="w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-100 slide-up relative">
+    <div id="auth-section" class="w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-100 slide-up relative z-10">
         <div class="bg-indigo-600 p-8 text-center relative overflow-hidden">
             <!-- Decorative Circles -->
             <div class="absolute top-0 left-0 w-24 h-24 bg-white opacity-10 rounded-full -translate-x-10 -translate-y-10"></div>
@@ -45,23 +89,58 @@
 
         <div class="p-8">
             <!-- Narasi / Syarat -->
-            <div class="mb-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded text-sm text-yellow-800">
-                <h3 class="font-bold mb-1"><i class="fas fa-info-circle mr-1"></i> Syarat Penggunaan</h3>
-                <p>Untuk mengakses aplikasi, pastikan <strong>Nama</strong> atau <strong>Asal Sekolah</strong> Anda sudah terdaftar di database kami.</p>
+            <div class="mb-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded text-sm text-yellow-800" id="syarat-box">
+                <h3 class="font-bold mb-1"><i class="fas fa-info-circle mr-1"></i> Petunjuk</h3>
+                <p>Silakan <strong>Login Aplikasi</strong> terlebih dahulu untuk membuka menu Cek Data dan Input Data.</p>
             </div>
 
             <!-- Pilihan Menu Awal -->
             <div id="initial-buttons" class="space-y-3">
-                <button onclick="showCheckMenu()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-lg shadow-indigo-200 transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2">
-                    <i class="fas fa-search"></i> Cek Data Saya
+                
+                <!-- MENU 1: LOGIN (Akan disembunyikan jika sukses) -->
+                <button id="btn-main-login" onclick="showAppLoginForm()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-lg shadow-indigo-200 transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2">
+                    <i class="fas fa-key"></i> Login Aplikasi
                 </button>
-                <a href="https://wartam47.github.io/input_nama" target="_blank" class="block w-full py-3 bg-white border-2 border-indigo-100 text-indigo-600 hover:bg-indigo-50 rounded-xl font-bold text-center transition-all flex items-center justify-center gap-2">
-                    <i class="fas fa-user-plus"></i> Input Data Baru
-                </a>
+
+                <!-- MENU 2: CEK DATA (Awalnya Terkunci) -->
+                <button id="btn-cek-data" onclick="showCheckMenu()" class="btn-locked w-full py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-bold shadow-lg shadow-blue-200 transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2">
+                    <i class="fas fa-search"></i> Cek Data<i class="fas fa-lock text-xs ml-1 opacity-50" id="lock-icon-1"></i>
+                </button>
+
+                <!-- MENU 3: INPUT DATA (Awalnya Terkunci) - DIGANTI JADI BUTTON -->
+                <button id="btn-input-data" onclick="showInputMenu()" class="btn-locked block w-full py-3 bg-white border-2 border-indigo-100 text-indigo-600 hover:bg-indigo-50 rounded-xl font-bold text-center transition-all flex items-center justify-center gap-2">
+                    <i class="fas fa-user-plus"></i> Input Data<i class="fas fa-lock text-xs ml-1 opacity-50" id="lock-icon-2"></i>
+                </button>
+
             </div>
 
-            <!-- Form Cek Data (Hidden Initially) -->
-            <div id="check-form" class="hidden space-y-4">
+            <!-- FORM LOGIN APLIKASI (Hidden Initially) -->
+            <div id="app-login-form" class="hidden space-y-4 fade-in">
+                <div class="text-center mb-4">
+                    <h3 class="text-lg font-bold text-gray-800">Login Akses</h3>
+                    <p class="text-xs text-gray-500">Masukkan Kode Akses Aplikasi</p>
+                </div>
+                
+                <div class="relative">
+                    <i class="fas fa-shield-alt absolute left-4 top-3.5 text-gray-400"></i>
+                    <input type="password" id="app-password-input" placeholder="Masukkan kode akses disini" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all">
+                </div>
+
+                <button onclick="verifyAppLogin()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-lg shadow-indigo-200 transition-all flex items-center justify-center gap-2">
+                    <span>Masuk</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+
+                <div class="flex justify-between items-center text-sm px-1">
+                    <button onclick="hideAppLoginForm()" class="text-gray-400 hover:text-gray-600 underline">Batal</button>
+                    <button onclick="showContactModal()" class="text-blue-500 hover:text-blue-700 font-semibold flex items-center gap-1">
+                        <i class="fas fa-question-circle"></i> Butuh Bantuan?
+                    </button>
+                </div>
+            </div>
+
+            <!-- FORM CEK DATA SISWA (Hidden Initially) -->
+            <div id="check-form" class="hidden space-y-4 fade-in">
                 <div class="text-center mb-4">
                     <h3 class="text-lg font-bold text-gray-800">Verifikasi Data</h3>
                     <p class="text-xs text-gray-500">Masukkan Nama Lengkap atau Asal Sekolah</p>
@@ -77,20 +156,96 @@
                     <i class="fas fa-arrow-right"></i>
                 </button>
 
+                <!-- Tombol Lihat Daftar Siswa -->
+                <div class="text-center mt-2">
+                    <button onclick="showDataModal()" class="text-sm text-indigo-500 hover:text-indigo-700 font-semibold underline flex items-center justify-center gap-1 mx-auto transition-colors">
+                        <i class="fas fa-list-ul"></i> Lihat Daftar Siswa
+                    </button>
+                </div>
+
                 <button onclick="hideCheckMenu()" class="w-full text-sm text-gray-400 hover:text-gray-600 underline">Kembali</button>
-                
-                <!-- Alert Feedback -->
-                <div id="feedback-msg" class="hidden text-center text-sm p-2 rounded-lg"></div>
             </div>
+
+            <!-- FORM INPUT DATA BARU (Hidden Initially) -->
+            <div id="input-form" class="hidden space-y-4 fade-in">
+                <div class="text-center mb-4">
+                    <h3 class="text-lg font-bold text-gray-800">Input Data</h3>
+                    <p class="text-xs text-gray-500">Silakan lengkapi Form di bawah ini</p>
+                </div>
+
+                <form id="studentForm" name="submit-to-google-sheet">
+                    <!-- Input Nama -->
+                    <div class="mb-4 relative">
+                        <label for="Nama" class="block text-sm font-medium text-gray-700 mb-1 text-left">Nama Lengkap</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-user text-gray-400"></i>
+                            </div>
+                            <input type="text" id="Nama" name="Nama" required class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white" placeholder="Contoh: Ahmad">
+                        </div>
+                    </div>
+
+                    <!-- Input Sekolah -->
+                    <div class="mb-6 relative">
+                        <label for="Sekolah" class="block text-sm font-medium text-gray-700 mb-1 text-left">Asal Sekolah</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-school text-gray-400"></i>
+                            </div>
+                            <input type="text" id="Sekolah" name="Sekolah" required class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white" placeholder="Contoh: SMP Negeri 4 Majenang">
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" id="btnSubmit" class="w-full bg-indigo-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all shadow-lg flex justify-center items-center gap-2 group">
+                        <span>Kirim Data</span>
+                        <i class="fas fa-paper-plane group-hover:translate-x-1 transition-transform"></i>
+                    </button>
+
+                    <!-- Loading Spinner (Hidden by default) -->
+                    <button type="button" id="btnLoading" disabled class="hidden w-full bg-indigo-400 text-white font-semibold py-3 px-4 rounded-lg cursor-not-allowed flex justify-center items-center gap-2">
+                        <div class="loader"></div>
+                        <span>Mengirim...</span>
+                    </button>
+                </form>
+
+                <!-- Success Message -->
+                <div id="successMessage" class="hidden mt-4 bg-green-50 border border-green-200 rounded-lg p-3 animate-fade-in-up">
+                    <div class="flex items-center">
+                        <i class="fas fa-check-circle text-green-500 text-xl mr-2"></i>
+                        <div>
+                            <h3 class="text-sm font-medium text-green-800">Berhasil!</h3>
+                            <p class="text-xs text-green-700">Data berhasil disimpan.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error Message -->
+                <div id="errorMessage" class="hidden mt-4 bg-red-50 border border-red-200 rounded-lg p-3 animate-fade-in-up">
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-circle text-red-500 text-xl mr-2"></i>
+                        <div>
+                            <h3 class="text-sm font-medium text-red-800">Gagal!</h3>
+                            <p class="text-xs text-red-700">Terjadi kesalahan jaringan.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="hideInputMenu()" class="w-full text-sm text-gray-400 hover:text-gray-600 underline mt-2">Kembali</button>
+            </div>
+            
+            <!-- Alert Feedback (General) -->
+            <div id="feedback-msg" class="hidden text-center text-sm p-2 rounded-lg mt-4"></div>
+
         </div>
         
-        <div class="bg-gray-50 p-4 text-center border-t border-gray-100">
+        <div class="bg-gray-50 p-4 text-center border-t border-gray-100 relative z-10">
             <p class="text-xs text-gray-400">@ Wartam - SMPN 4 Majenang</p>
         </div>
     </div>
 
     <!-- BAGIAN 2: DASHBOARD MENU UTAMA (Hidden Default) -->
-    <div id="dashboard-section" class="hidden w-full max-w-4xl fade-in">
+    <div id="dashboard-section" class="hidden w-full max-w-4xl fade-in relative z-10">
         
         <!-- Header Dashboard -->
         <div class="bg-white rounded-2xl shadow-lg p-6 mb-6 flex flex-col md:flex-row items-center justify-between border border-white/50 backdrop-blur-sm bg-opacity-90">
@@ -116,101 +271,379 @@
 
     </div>
 
+    <!-- MODAL POPUP CONTACT -->
+    <div id="contact-modal" class="fixed inset-0 modal-overlay hidden flex items-center justify-center z-50 fade-in">
+        <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full mx-4 text-center relative transform transition-all scale-100">
+            
+            <!-- Icon -->
+            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-600 text-2xl shadow-sm">
+                <i class="fas fa-headset"></i>
+            </div>
+            
+            <!-- Text -->
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Hubungi Admin</h3>
+            <p class="text-gray-600 mb-6 text-sm">
+                Silakan pilih keperluan Anda di bawah ini:
+            </p>
+            
+            <!-- PILIHAN 1: PAKAI APLIKASI -->
+            <a href="https://wa.me/628156095823?text=Halo,%20saya%20ingin%20pakai%20aplikasi%20Cerdas%20Berhitung.%20Mohon%20info%20kode%20aksesnya.%0A%0ANama:%20...%0AInstansi:%20..." target="_blank" class="block w-full py-3 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-xl font-bold mb-3 transition-all transform hover:scale-[1.02] shadow-lg shadow-green-200 flex items-center justify-center gap-2 group">
+                <i class="fab fa-whatsapp text-2xl group-hover:rotate-12 transition-transform"></i> 
+                <span>Pakai Aplikasi</span>
+            </a>
+
+            <!-- PILIHAN 2: MEMBUAT APLIKASI -->
+            <a href="https://wa.me/628156095823?text=Halo,%20saya%20tertarik%20ingin%20membuat%20aplikasi%20seperti%20Cerdas%20Berhitung.%20Mohon%20infonya.%0A%0ANama:%20...%0AInstansi:%20..." target="_blank" class="block w-full py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-xl font-bold mb-3 transition-all transform hover:scale-[1.02] shadow-lg shadow-blue-200 flex items-center justify-center gap-2 group">
+                <i class="fas fa-code text-xl group-hover:scale-110 transition-transform"></i> 
+                <span>Buat Aplikasi</span>
+            </a>
+            
+            <!-- Close Button -->
+            <button onclick="closeContactModal()" class="w-full py-2 text-gray-400 hover:text-gray-600 text-sm font-medium transition-colors">
+                Tutup Jendela
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL POPUP DATA SISWA (BARU) -->
+    <div id="data-modal" class="fixed inset-0 modal-overlay hidden flex items-center justify-center z-50 fade-in">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl mx-4 flex flex-col max-h-[85vh] relative transform transition-all scale-100">
+            <!-- Header Modal -->
+            <div class="p-5 bg-indigo-600 text-white rounded-t-2xl flex justify-between items-center shrink-0">
+                 <div class="flex items-center gap-2">
+                     <i class="fas fa-users text-lg"></i>
+                     <h3 class="text-lg font-bold">Data Terdaftar</h3>
+                 </div>
+                 <button onclick="closeDataModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 transition-colors">
+                     <i class="fas fa-times"></i>
+                 </button>
+            </div>
+            
+            <!-- Content Area (Scrollable) -->
+            <div class="p-0 overflow-y-auto custom-scroll flex-1 relative bg-gray-50">
+                 <!-- Loader -->
+                 <div id="data-loader" class="flex flex-col items-center justify-center py-20">
+                     <div class="loader border-indigo-200 border-t-indigo-600 w-10 h-10 mb-3"></div>
+                     <span class="text-sm text-gray-500">Memuat data dari database...</span>
+                 </div>
+                 
+                 <!-- Table Container -->
+                 <div class="p-4">
+                    <table id="data-table" class="w-full text-left border-collapse hidden bg-white rounded-lg shadow-sm overflow-hidden">
+                        <thead class="bg-gray-100 sticky top-0">
+                            <tr>
+                                <th class="p-3 border-b border-gray-200 font-bold text-gray-600 text-xs uppercase tracking-wider w-12 text-center">No</th>
+                                <th class="p-3 border-b border-gray-200 font-bold text-gray-600 text-xs uppercase tracking-wider">Nama Lengkap</th>
+                                <th class="p-3 border-b border-gray-200 font-bold text-gray-600 text-xs uppercase tracking-wider">Asal Sekolah</th>
+                            </tr>
+                        </thead>
+                        <tbody id="data-table-body" class="text-sm text-gray-700 divide-y divide-gray-100">
+                            <!-- Rows generated by JS -->
+                        </tbody>
+                    </table>
+
+                    <!-- Empty State -->
+                    <div id="data-empty" class="hidden flex flex-col items-center justify-center py-10 text-center">
+                        <i class="fas fa-inbox text-gray-300 text-4xl mb-2"></i>
+                        <p class="text-gray-500 text-sm">Belum ada data siswa ditemukan.</p>
+                    </div>
+                 </div>
+            </div>
+            
+            <!-- Footer Modal -->
+            <div class="p-4 border-t border-gray-100 text-right bg-white rounded-b-2xl shrink-0">
+                 <button onclick="closeDataModal()" class="px-5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg text-sm font-bold transition-colors">
+                     Tutup
+                 </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // --- KONFIGURASI DATA ---
         const SHEET_ID = '1nwPNJxXlqMQFUBhrCXnrlLIfeTlV7TViWyDEKlZm28c';
-        const SHEET_NAME = 'nama'; // Nama sheet (tab) di Google Spreadsheet
+        const SHEET_NAME = 'nama'; 
+        const APP_ACCESS_CODE = 'hitung12345'; // KODE AKSES DEFAULT
+        // URL Script Google Apps Script untuk Input Data
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyO2JuU8h6JtNq1Tbcget2pqz8BtSbj-g7SOvB3v7OjhsasX551S_TCxL5gGis2tSHQaw/exec'; 
         
-        // Daftar Menu (Link 2-6)
         const menuItems = [
-            { 
-                id: 2, 
-                title: "Penjumlahan", 
-                desc: "Mengasah keterampilan berhitung operasi penjumlahan",
-                icon: "fa-plus", 
-                color: "bg-blue-500", 
-                bg: "bg-blue-50",
-                text: "text-blue-600",
-                url: "https://script.google.com/macros/s/AKfycbwO1xRFTwbwteijgB01zjWMzzmZ7ZbMZLeyMhEgvSB6RC34r1AN9sOpCaqbAHSEzsHl/exec" 
-            },
-            { 
-                id: 3, 
-                title: "Pengurangan", 
-                desc: "Mengasah keterampilan berhitung operasi pengurangan",
-                icon: "fa-minus", 
-                color: "bg-orange-500", 
-                bg: "bg-orange-50",
-                text: "text-orange-600",
-                url: "https://script.google.com/macros/s/AKfycbyrTSXJluCIDliCyr6mOMIBQaENndwzDt6zuk7WBhutkQ0cxANdkH3-FO7I_d-gc2FPgg/exec" 
-            },
-            { 
-                id: 4, 
-                title: "Perkalian", 
-                desc: "Mengasah keterampilan berhitung operasi perkalian",
-                icon: "fa-times", 
-                color: "bg-purple-500", 
-                bg: "bg-purple-50",
-                text: "text-purple-600",
-                url: "https://script.google.com/macros/s/AKfycbwXsvA3LIwJiUt4TinLtOp9BfkCS4omhmi24peg0wQz-1uzK67dsLMjSDawyaktJfpMKg/exec" 
-            },
-            { 
-                id: 5, 
-                title: "Pembagian", 
-                desc: "Mengasah keterampilan berhitung operasi pembagian",
-                icon: "fa-divide", 
-                color: "bg-pink-500", 
-                bg: "bg-pink-50",
-                text: "text-pink-600",
-                url: "https://script.google.com/macros/s/AKfycbwGJ9yVIiGbykizvsrwCcispO-enIY1NeZOhqieqQPFkRgySy9LtyGCJlVYstUgooAN/exec" 
-            },
-            { 
-                id: 6, 
-                title: "Kompetisi", 
-                desc: "Mengasah keterampilan berhitung secara kolaboratif",
-                icon: "fa-trophy", 
-                color: "bg-yellow-500", 
-                bg: "bg-yellow-50",
-                text: "text-yellow-600",
-                url: "https://wartam47.github.io/balapan_mobil" 
-            }
+            { id: 2, title: "Penjumlahan", desc: "Mengasah keterampilan berhitung operasi penjumlahan", icon: "fa-plus", color: "bg-blue-500", bg: "bg-blue-50", text: "text-blue-600", url: "https://script.google.com/macros/s/AKfycbwO1xRFTwbwteijgB01zjWMzzmZ7ZbMZLeyMhEgvSB6RC34r1AN9sOpCaqbAHSEzsHl/exec" },
+            { id: 3, title: "Pengurangan", desc: "Mengasah keterampilan berhitung operasi pengurangan", icon: "fa-minus", color: "bg-orange-500", bg: "bg-orange-50", text: "text-orange-600", url: "https://script.google.com/macros/s/AKfycbyrTSXJluCIDliCyr6mOMIBQaENndwzDt6zuk7WBhutkQ0cxANdkH3-FO7I_d-gc2FPgg/exec" },
+            { id: 4, title: "Perkalian", desc: "Mengasah keterampilan berhitung operasi perkalian", icon: "fa-times", color: "bg-purple-500", bg: "bg-purple-50", text: "text-purple-600", url: "https://script.google.com/macros/s/AKfycbwXsvA3LIwJiUt4TinLtOp9BfkCS4omhmi24peg0wQz-1uzK67dsLMjSDawyaktJfpMKg/exec" },
+            { id: 5, title: "Pembagian", desc: "Mengasah keterampilan berhitung operasi pembagian", icon: "fa-divide", color: "bg-pink-500", bg: "bg-pink-50", text: "text-pink-600", url: "https://script.google.com/macros/s/AKfycbwGJ9yVIiGbykizvsrwCcispO-enIY1NeZOhqieqQPFkRgySy9LtyGCJlVYstUgooAN/exec" },
+            { id: 6, title: "Kompetisi", desc: "Mengasah keterampilan berhitung secara kolaboratif", icon: "fa-trophy", color: "bg-yellow-500", bg: "bg-yellow-50", text: "text-yellow-600", url: "https://wartam47.github.io/balapan_mobil" }
         ];
 
         // --- DOM ELEMENTS ---
         const authSection = document.getElementById('auth-section');
         const dashboardSection = document.getElementById('dashboard-section');
         const initialButtons = document.getElementById('initial-buttons');
+        const appLoginForm = document.getElementById('app-login-form');
         const checkForm = document.getElementById('check-form');
+        const inputForm = document.getElementById('input-form');
         const searchInput = document.getElementById('search-input');
         const feedbackMsg = document.getElementById('feedback-msg');
         const btnVerify = document.getElementById('btn-verify');
         const greetingText = document.getElementById('greeting-text');
+        const syaratBox = document.getElementById('syarat-box');
+        
+        // Buttons Utama
+        const btnMainLogin = document.getElementById('btn-main-login');
+        const btnCekData = document.getElementById('btn-cek-data');
+        const btnInputData = document.getElementById('btn-input-data');
+        const lockIcon1 = document.getElementById('lock-icon-1');
+        const lockIcon2 = document.getElementById('lock-icon-2');
 
-        // --- FUNGSI NAVIGASI UI ---
+        // Modal Contact
+        const contactModal = document.getElementById('contact-modal');
+        
+        // Modal Data Siswa
+        const dataModal = document.getElementById('data-modal');
+        const dataLoader = document.getElementById('data-loader');
+        const dataTable = document.getElementById('data-table');
+        const dataTableBody = document.getElementById('data-table-body');
+        const dataEmpty = document.getElementById('data-empty');
+
+        // Form Submission Elements
+        const formSubmit = document.forms['submit-to-google-sheet'];
+        const btnSubmit = document.getElementById('btnSubmit');
+        const btnLoading = document.getElementById('btnLoading');
+        const successMessage = document.getElementById('successMessage');
+        const errorMessage = document.getElementById('errorMessage');
+
+        // --- LOGIKA MODAL DATA SISWA ---
+        function showDataModal() {
+            dataModal.classList.remove('hidden');
+            fetchDataList();
+        }
+
+        function closeDataModal() {
+            dataModal.classList.add('hidden');
+        }
+
+        async function fetchDataList() {
+            // Reset View
+            dataLoader.classList.remove('hidden');
+            dataTable.classList.add('hidden');
+            dataEmpty.classList.add('hidden');
+            dataTableBody.innerHTML = '';
+
+            try {
+                // Mengambil data dari Google Sheet menggunakan Visualization API
+                const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${SHEET_NAME}`;
+                const response = await fetch(url);
+                const csvText = await response.text();
+                
+                const rows = csvText.split('\n');
+                let count = 0;
+
+                // Parsing baris per baris
+                rows.forEach((row, index) => {
+                    // Bersihkan tanda kutip yang biasa ada di output Gviz CSV
+                    let cleanedRow = row.replace(/"/g, ''); 
+                    if (!cleanedRow.trim()) return;
+
+                    let cols = cleanedRow.split(',');
+                    if (cols.length < 2) return;
+                    
+                    let nama = cols[0].trim();
+                    let sekolah = cols[1].trim();
+
+                    // Skip Header (Asumsi header ada "Nama" di kolom pertama)
+                    if (index === 0 && (nama.toLowerCase().includes('nama'))) return;
+                    
+                    // Tambahkan ke tabel
+                    count++;
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-indigo-50 transition-colors";
+                    tr.innerHTML = `
+                        <td class="p-3 text-center text-gray-400 font-mono text-xs">${count}</td>
+                        <td class="p-3 font-medium text-gray-800 capitalize">${nama}</td>
+                        <td class="p-3 text-gray-600 capitalize text-xs">${sekolah}</td>
+                    `;
+                    dataTableBody.appendChild(tr);
+                });
+
+                dataLoader.classList.add('hidden');
+                
+                if (count > 0) {
+                    dataTable.classList.remove('hidden');
+                } else {
+                    dataEmpty.classList.remove('hidden');
+                }
+
+            } catch (error) {
+                console.error(error);
+                dataLoader.classList.add('hidden');
+                dataEmpty.innerHTML = '<p class="text-red-500">Gagal memuat data. Periksa koneksi internet.</p>';
+                dataEmpty.classList.remove('hidden');
+            }
+        }
+
+        // --- LOGIKA FORM INPUT DATA BARU ---
+
+        function showInputMenu() {
+            initialButtons.classList.add('hidden');
+            inputForm.classList.remove('hidden');
+            hideFeedback();
+        }
+
+        function hideInputMenu() {
+            inputForm.classList.add('hidden');
+            initialButtons.classList.remove('hidden');
+            initialButtons.classList.add('fade-in');
+            hideFeedback();
+            // Reset pesan sukses/error saat kembali
+            successMessage.classList.add('hidden');
+            errorMessage.classList.add('hidden');
+        }
+
+        // Event Listener untuk Submit Form
+        if(formSubmit) {
+            formSubmit.addEventListener('submit', e => {
+                e.preventDefault();
+                
+                // Tampilkan loading, sembunyikan tombol submit
+                btnSubmit.classList.add('hidden');
+                btnLoading.classList.remove('hidden');
+                btnLoading.classList.add('flex');
+                
+                // Sembunyikan pesan sebelumnya
+                successMessage.classList.add('hidden');
+                errorMessage.classList.add('hidden');
+
+                fetch(scriptURL, { method: 'POST', body: new FormData(formSubmit)})
+                    .then(response => {
+                        // Reset tombol
+                        btnLoading.classList.add('hidden');
+                        btnLoading.classList.remove('flex');
+                        btnSubmit.classList.remove('hidden');
+                        
+                        console.log('Success!', response);
+                        
+                        // Tampilkan pesan sukses
+                        successMessage.classList.remove('hidden');
+                        
+                        // Reset form
+                        formSubmit.reset();
+                        
+                        // Hilangkan pesan sukses setelah 5 detik
+                        setTimeout(() => {
+                            successMessage.classList.add('hidden');
+                        }, 5000);
+                    })
+                    .catch(error => {
+                        console.error('Error!', error.message);
+                        
+                        // Reset tombol
+                        btnLoading.classList.add('hidden');
+                        btnLoading.classList.remove('flex');
+                        btnSubmit.classList.remove('hidden');
+                        
+                        // Tampilkan pesan error
+                        errorMessage.classList.remove('hidden');
+                    });
+            });
+        }
+
+
+        // --- LOGIKA MODAL CONTACT ---
+        function showContactModal() {
+            contactModal.classList.remove('hidden');
+        }
+
+        function closeContactModal() {
+            contactModal.classList.add('hidden');
+        }
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(e) {
+            if (e.target === contactModal) {
+                closeContactModal();
+            }
+            if (e.target === dataModal) {
+                closeDataModal();
+            }
+        });
+
+        // --- LOGIKA LOGIN APLIKASI (UTAMA) ---
+
+        function showAppLoginForm() {
+            initialButtons.classList.add('hidden');
+            appLoginForm.classList.remove('hidden');
+            document.getElementById('app-password-input').focus();
+            hideFeedback();
+        }
+
+        function hideAppLoginForm() {
+            appLoginForm.classList.add('hidden');
+            initialButtons.classList.remove('hidden');
+            hideFeedback();
+        }
+
+        function verifyAppLogin() {
+            const inputCode = document.getElementById('app-password-input').value;
+            
+            if (inputCode === APP_ACCESS_CODE) {
+                // Login Sukses
+                localStorage.setItem('appUnlocked', 'true');
+                unlockAppFeatures();
+                hideAppLoginForm();
+                showFeedback("Akses Diterima!", "green");
+                setTimeout(hideFeedback, 2000);
+            } else {
+                showFeedback("Kode Salah! Coba lagi.", "red");
+            }
+        }
+
+        function unlockAppFeatures() {
+            // Hilangkan status disabled pada tombol Cek Data & Input
+            btnCekData.classList.remove('btn-locked');
+            btnInputData.classList.remove('btn-locked');
+            
+            // SEMBUNYIKAN Tombol Login Utama
+            btnMainLogin.classList.add('hidden');
+            
+            // Hilangkan ikon gembok
+            if(lockIcon1) lockIcon1.style.display = 'none';
+            if(lockIcon2) lockIcon2.style.display = 'none';
+
+            // Update teks syarat agar sesuai konteks
+            syaratBox.innerHTML = `
+                <h3 class="font-bold mb-1"><i class="fas fa-check-circle mr-1"></i> Petunjuk</h3>
+                <p>Silakan cek data Anda di menu <strong>Cek Data</strong>. Jika belum ada, silakan akses menu <strong>Input Data</strong>.</p>
+            `;
+            syaratBox.classList.replace('border-yellow-400', 'border-green-400');
+            syaratBox.classList.replace('bg-yellow-50', 'bg-green-50');
+            syaratBox.classList.replace('text-yellow-800', 'text-green-800');
+        }
+
+        // --- LOGIKA CEK DATA SISWA ---
 
         function showCheckMenu() {
             initialButtons.classList.add('hidden');
             checkForm.classList.remove('hidden');
             checkForm.classList.add('fade-in');
             searchInput.focus();
+            hideFeedback();
         }
 
         function hideCheckMenu() {
             checkForm.classList.add('hidden');
             initialButtons.classList.remove('hidden');
             initialButtons.classList.add('fade-in');
-            feedbackMsg.classList.add('hidden');
+            hideFeedback();
         }
 
         function renderDashboard() {
             const grid = document.getElementById('menu-grid');
             grid.innerHTML = '';
-            
             menuItems.forEach(item => {
                 const card = document.createElement('a');
                 card.href = item.url;
                 card.target = "_blank";
                 card.className = `block ${item.bg} border border-transparent hover:border-${item.text.split('-')[1]}-200 rounded-2xl p-6 transition-all hover:-translate-y-1 hover:shadow-lg group`;
-                
                 card.innerHTML = `
                     <div class="flex items-start justify-between mb-4">
                         <div class="w-12 h-12 ${item.color} rounded-xl flex items-center justify-center text-white text-xl shadow-md group-hover:scale-110 transition-transform">
@@ -228,24 +661,22 @@
         function switchToDashboard() {
             authSection.classList.add('hidden');
             dashboardSection.classList.remove('hidden');
-            
-            // UPDATE NAMA PENGGUNA DISINI
             const savedName = localStorage.getItem('mathAppName') || "Pelajar";
-            // Pastikan format huruf kapital di awal kata (Capitalize)
             const formattedName = savedName.replace(/\b\w/g, l => l.toUpperCase());
             greetingText.innerText = `Halo, ${formattedName}!`;
-            
             renderDashboard();
             localStorage.setItem('mathAppAuth', 'true');
         }
 
         function logout() {
+            // Reset semua sesi
             localStorage.removeItem('mathAppAuth');
-            localStorage.removeItem('mathAppName'); // Hapus nama saat logout
+            localStorage.removeItem('mathAppName');
+            localStorage.removeItem('appUnlocked'); 
             location.reload();
         }
 
-        // --- LOGIKA VERIFIKASI GOOGLE SHEET ---
+        // --- VERIFIKASI GOOGLE SHEET ---
 
         async function verifyUser() {
             const query = searchInput.value.trim().toLowerCase();
@@ -254,26 +685,19 @@
                 return;
             }
 
-            // UI Loading
             const originalBtnContent = btnVerify.innerHTML;
             btnVerify.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memeriksa...';
             btnVerify.disabled = true;
 
             try {
-                // Menggunakan Google Visualization API Query
                 const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${SHEET_NAME}`;
-                
                 const response = await fetch(url);
                 if (!response.ok) throw new Error("Gagal mengambil data");
-                
                 const csvText = await response.text();
-                // Sekarang menerima kembali NAMA jika ditemukan
                 const foundName = parseAndSearchCSV(csvText, query);
 
                 if (foundName) {
-                    // Simpan nama yang ditemukan ke Local Storage
                     localStorage.setItem('mathAppName', foundName);
-                    
                     showFeedback(`Data ditemukan! Selamat datang, ${foundName}`, "green");
                     setTimeout(switchToDashboard, 1500);
                 } else {
@@ -281,7 +705,6 @@
                     btnVerify.innerHTML = originalBtnContent;
                     btnVerify.disabled = false;
                 }
-
             } catch (error) {
                 console.error(error);
                 showFeedback("Terjadi kesalahan koneksi atau Sheet belum dipublikasikan.", "red");
@@ -290,57 +713,53 @@
             }
         }
 
-        // Fungsi parsing diperbarui untuk mengembalikan NAMA (bukan hanya true/false)
         function parseAndSearchCSV(csvText, query) {
             const rows = csvText.split('\n');
-            
             for (let i = 0; i < rows.length; i++) {
                 let rowData = rows[i].replace(/"/g, '').split(',');
-                
                 if (rowData.length >= 2) {
-                    // Ambil data asli untuk ditampilkan nanti
                     const realName = rowData[0] ? rowData[0].trim() : "";
                     const realSchool = rowData[1] ? rowData[1].trim() : "";
-
-                    // Data versi huruf kecil untuk pencarian
                     const colA = realName.toLowerCase(); 
                     const colB = realSchool.toLowerCase(); 
-                    
-                    // Jika cocok dengan Nama ATAU Sekolah
                     if (colA === query || (colB.length > 3 && colB.includes(query))) {
-                        return realName; // KEMBALIKAN NAMA ASLINYA
+                        return realName;
                     }
                 }
             }
-            return null; // Tidak ditemukan
+            return null;
         }
 
         function showFeedback(msg, colorType) {
             feedbackMsg.innerText = msg;
-            feedbackMsg.classList.remove('hidden', 'text-red-500', 'bg-red-50', 'text-green-500', 'bg-green-50');
-            
+            feedbackMsg.classList.remove('hidden', 'text-red-600', 'bg-red-50', 'text-green-600', 'bg-green-50');
             if (colorType === "red") {
                 feedbackMsg.classList.add('text-red-600', 'bg-red-50');
             } else {
                 feedbackMsg.classList.add('text-green-600', 'bg-green-50');
             }
         }
+        
+        function hideFeedback() {
+            feedbackMsg.classList.add('hidden');
+        }
 
         // --- INIT ---
         document.addEventListener("DOMContentLoaded", () => {
+            // 1. Cek apakah sudah login siswa (Level 2)
             if (localStorage.getItem('mathAppAuth') === 'true') {
                 switchToDashboard();
+            } 
+            // 2. Cek apakah sudah login aplikasi (Level 1)
+            else if (localStorage.getItem('appUnlocked') === 'true') {
+                unlockAppFeatures();
             }
 
-            searchInput.addEventListener("keypress", function(event) {
-                if (event.key === "Enter") {
-                    event.preventDefault();
-                    verifyUser();
-                }
-            });
+            // Enter key support
+            searchInput.addEventListener("keypress", function(event) { if (event.key === "Enter") { event.preventDefault(); verifyUser(); }});
+            document.getElementById('app-password-input').addEventListener("keypress", function(event) { if (event.key === "Enter") { event.preventDefault(); verifyAppLogin(); }});
         });
 
     </script>
 </body>
 </html>
-
