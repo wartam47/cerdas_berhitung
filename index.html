@@ -170,7 +170,7 @@
             <div id="input-form" class="hidden space-y-4 fade-in">
                 <div class="text-center mb-4">
                     <h3 class="text-lg font-bold text-gray-800">Input Data</h3>
-                    <p class="text-xs text-gray-500">Silakan lengkapi Form di bawah ini</p>
+                    <p class="text-xs text-gray-500">Silakan lengkapi form di bawah ini</p>
                 </div>
 
                 <form id="studentForm" name="submit-to-google-sheet">
@@ -181,7 +181,7 @@
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="fas fa-user text-gray-400"></i>
                             </div>
-                            <input type="text" id="Nama" name="Nama" required class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white" placeholder="Contoh: Ahmad">
+                            <input type="text" id="Nama" name="Nama" required class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors bg-gray-50 focus:bg-white" placeholder="Contoh: Abdullah">
                         </div>
                     </div>
 
@@ -286,15 +286,16 @@
                 Silakan pilih keperluan Anda di bawah ini:
             </p>
             
-            <!-- PILIHAN 1: PAKAI APLIKASI -->
-            <a href="https://wa.me/628156095823?text=Halo,%20saya%20ingin%20pakai%20aplikasi%20Cerdas%20Berhitung.%20Mohon%20info%20kode%20aksesnya.%0A%0ANama:%20...%0AInstansi:%20..." target="_blank" class="block w-full py-3 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-xl font-bold mb-3 transition-all transform hover:scale-[1.02] shadow-lg shadow-green-200 flex items-center justify-center gap-2 group">
-                <i class="fab fa-whatsapp text-2xl group-hover:rotate-12 transition-transform"></i> 
+            <!-- PILIHAN 1: PAKAI APLIKASI (MERAH - Membuka Info Kode) -->
+            <button onclick="showCodeInfo()" class="block w-full py-3 bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white rounded-xl font-bold mb-3 transition-all transform hover:scale-[1.02] shadow-lg shadow-red-200 flex items-center justify-center gap-2 group">
+                <i class="fas fa-unlock-alt text-2xl group-hover:rotate-12 transition-transform"></i> 
                 <span>Pakai Aplikasi</span>
-            </a>
+            </button>
 
-            <!-- PILIHAN 2: MEMBUAT APLIKASI -->
-            <a href="https://wa.me/628156095823?text=Halo,%20saya%20tertarik%20ingin%20membuat%20aplikasi%20seperti%20Cerdas%20Berhitung.%20Mohon%20infonya.%0A%0ANama:%20...%0AInstansi:%20..." target="_blank" class="block w-full py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-xl font-bold mb-3 transition-all transform hover:scale-[1.02] shadow-lg shadow-blue-200 flex items-center justify-center gap-2 group">
-                <i class="fas fa-code text-xl group-hover:scale-110 transition-transform"></i> 
+            <!-- PILIHAN 2: MEMBUAT APLIKASI (HIJAU - WHATSAPP) -->
+            <a href="https://wa.me/628156095823?text=Halo,%20saya%20tertarik%20ingin%20membuat%20aplikasi%20seperti%20Cerdas%20Berhitung.%20Mohon%20infonya.%0A%0ANama:%20...%0A%0AInstansi:%20..." target="_blank" class="block w-full py-3 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-xl font-bold mb-3 transition-all transform hover:scale-[1.02] shadow-lg shadow-green-200 flex items-center justify-center gap-2 group">
+                <!-- Icon diubah menjadi WhatsApp -->
+                <i class="fab fa-whatsapp text-2xl group-hover:rotate-12 transition-transform"></i> 
                 <span>Buat Aplikasi</span>
             </a>
             
@@ -305,7 +306,33 @@
         </div>
     </div>
 
-    <!-- MODAL POPUP DATA SISWA (BARU) -->
+    <!-- MODAL POPUP INFO KODE (BARU) -->
+    <div id="code-info-modal" class="fixed inset-0 modal-overlay hidden flex items-center justify-center z-[60] fade-in">
+        <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full mx-4 text-center relative transform transition-all scale-100">
+            <!-- Icon -->
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 text-green-600 text-2xl shadow-sm">
+                <i class="fas fa-key"></i>
+            </div>
+            
+            <!-- Text -->
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Kode Akses Aplikasi</h3>
+            <p class="text-gray-600 mb-4 text-sm">
+                Gunakan kode di bawah ini untuk masuk:
+            </p>
+            
+            <!-- Kode Display (DIUPDATE) -->
+            <div class="bg-gray-100 p-4 rounded-xl border border-gray-200 mb-6">
+                <span class="text-2xl font-mono font-bold text-gray-800 tracking-wider">hitung12345</span>
+            </div>
+            
+            <!-- Button -->
+            <button onclick="closeCodeInfo()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition-colors shadow-lg shadow-indigo-200">
+                Tutup dan silakan Login
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL POPUP DATA SISWA -->
     <div id="data-modal" class="fixed inset-0 modal-overlay hidden flex items-center justify-center z-50 fade-in">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl mx-4 flex flex-col max-h-[85vh] relative transform transition-all scale-100">
             <!-- Header Modal -->
@@ -363,7 +390,7 @@
         // --- KONFIGURASI DATA ---
         const SHEET_ID = '1nwPNJxXlqMQFUBhrCXnrlLIfeTlV7TViWyDEKlZm28c';
         const SHEET_NAME = 'nama'; 
-        const APP_ACCESS_CODE = 'hitung12345'; // KODE AKSES DEFAULT
+        const APP_ACCESS_CODE = 'hitung12345'; // KODE AKSES DIPERBARUI
         // URL Script Google Apps Script untuk Input Data
         const scriptURL = 'https://script.google.com/macros/s/AKfycbyO2JuU8h6JtNq1Tbcget2pqz8BtSbj-g7SOvB3v7OjhsasX551S_TCxL5gGis2tSHQaw/exec'; 
         
@@ -395,8 +422,9 @@
         const lockIcon1 = document.getElementById('lock-icon-1');
         const lockIcon2 = document.getElementById('lock-icon-2');
 
-        // Modal Contact
+        // Modal Contact & Code Info
         const contactModal = document.getElementById('contact-modal');
+        const codeInfoModal = document.getElementById('code-info-modal');
         
         // Modal Data Siswa
         const dataModal = document.getElementById('data-modal');
@@ -411,6 +439,20 @@
         const btnLoading = document.getElementById('btnLoading');
         const successMessage = document.getElementById('successMessage');
         const errorMessage = document.getElementById('errorMessage');
+
+        // --- LOGIKA MODAL INFO KODE ---
+        function showCodeInfo() {
+            closeContactModal(); // Tutup modal pilihan
+            codeInfoModal.classList.remove('hidden'); // Buka modal info kode
+        }
+
+        function closeCodeInfo() {
+            codeInfoModal.classList.add('hidden');
+            // Fokuskan ke input password
+            setTimeout(() => {
+                document.getElementById('app-password-input').focus();
+            }, 100);
+        }
 
         // --- LOGIKA MODAL DATA SISWA ---
         function showDataModal() {
@@ -564,6 +606,9 @@
             }
             if (e.target === dataModal) {
                 closeDataModal();
+            }
+            if (e.target === codeInfoModal) {
+                closeCodeInfo();
             }
         });
 
@@ -722,7 +767,18 @@
                     const realSchool = rowData[1] ? rowData[1].trim() : "";
                     const colA = realName.toLowerCase(); 
                     const colB = realSchool.toLowerCase(); 
-                    if (colA === query || (colB.length > 3 && colB.includes(query))) {
+                    
+                    // PERBAIKAN LOGIKA PENCARIAN:
+                    // Mencegah bug dimana input "a" bisa masuk karena cocok dengan sekolah yang mengandung huruf "a"
+                    
+                    const isNameExact = colA === query; // Nama harus sama persis
+                    const isSchoolExact = colB === query; // Sekolah sama persis
+                    
+                    // Sekolah boleh partial match HANYA JIKA query minimal 3 karakter
+                    // Contoh: "smp" (3 huruf) cocok dengan "smpn 1", tapi "a" (1 huruf) tidak cocok.
+                    const isSchoolPartial = query.length >= 3 && colB.includes(query);
+
+                    if (isNameExact || isSchoolExact || isSchoolPartial) {
                         return realName;
                     }
                 }
