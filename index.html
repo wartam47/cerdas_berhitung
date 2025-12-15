@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cerdas Berhitung - SMPN 4 Majenang</title>
+    <title>Cerdas Berhitung</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome -->
@@ -386,43 +386,60 @@
         </div>
     </div>
 
-    <!-- MODAL POPUP GAMES (IFRAME) - DIUPDATE DENGAN TOMBOL TAB BARU LEBIH JELAS -->
+    <!-- MODAL POPUP GAMES (IFRAME) - REDESAIN PANEL KONTROL -->
     <div id="game-modal" class="fixed inset-0 modal-overlay hidden flex flex-col z-[100] fade-in">
+        
         <!-- Header Game Modal -->
-        <div class="bg-indigo-600 text-white p-3 flex justify-between items-center shadow-md shrink-0">
-            <h3 id="game-title" class="font-bold text-lg truncate px-2">Materi Belajar</h3>
-            
-            <div class="flex items-center gap-2">
-                <!-- TOMBOL ALTERNATIF LINK (Hidden by default) -->
-                <button id="game-alt-btn" onclick="toggleAltLink()" class="hidden text-xs bg-orange-500 hover:bg-orange-600 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 shadow-sm">
-                    <i class="fas fa-random"></i> Ganti Server/Link
-                </button>
+        <div class="bg-indigo-600 text-white p-4 flex justify-between items-center shadow-lg shrink-0 z-20">
+            <div class="flex items-center gap-3 overflow-hidden">
+                <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-book-open text-sm"></i>
+                </div>
+                <h3 id="game-title" class="font-bold text-lg truncate">Materi Belajar</h3>
+            </div>
+            <button onclick="closeGameModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-red-500 hover:bg-red-600 text-white transition-colors shadow-md">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
 
-                <!-- TOMBOL TAB BARU -->
-                <a id="game-fallback-btn" href="#" target="_blank" class="text-xs font-bold bg-yellow-400 hover:bg-yellow-500 text-indigo-900 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 shadow-sm">
-                    <i class="fas fa-external-link-alt"></i> Layar Penuh
-                </a>
-                
-                <button onclick="closeGameModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white transition-colors ml-1">
-                    <i class="fas fa-times text-lg"></i>
+        <!-- PANEL KONTROL SERVER DAN SOLUSI (BARU) -->
+        <div id="server-controls" class="bg-white border-b border-gray-200 p-3 shadow-sm z-10 hidden">
+            
+            <!-- Keterangan Solusi -->
+            <div class="flex items-start gap-2 mb-3 bg-blue-50 border border-blue-100 text-blue-800 p-2 rounded-lg text-xs">
+                <i class="fas fa-info-circle mt-0.5 text-blue-500"></i>
+                <p><strong>Tips Akses:</strong> Jika <strong>Link 1 (Utama)</strong> bermasalah atau layar putih, silakan klik tombol <strong>Link 2 (Alternatif)</strong> di bawah ini.</p>
+            </div>
+
+            <!-- Tombol Switcher Server -->
+            <div class="flex gap-2">
+                <!-- Tombol Server 1 (Default Aktif) -->
+                <button id="btn-server-1" onclick="switchServer(1)" class="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-bold transition-all border-2 border-indigo-600 bg-indigo-600 text-white shadow-md">
+                    <span class="w-5 h-5 rounded-full bg-white text-indigo-600 flex items-center justify-center text-xs">1</span>
+                    Link Utama
                 </button>
+                
+                <!-- Tombol Server 2 -->
+                <button id="btn-server-2" onclick="switchServer(2)" class="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-bold transition-all border-2 border-gray-200 bg-white text-gray-500 hover:bg-gray-50">
+                    <span class="w-5 h-5 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-xs">2</span>
+                    Link Alternatif
+                </button>
+            </div>
+            
+            <!-- Link Tab Baru (Backup Terakhir) -->
+            <div class="mt-2 text-center">
+                <a id="game-fallback-btn" href="#" target="_blank" class="inline-flex items-center gap-1 text-xs text-gray-400 hover:text-indigo-600 transition-colors underline">
+                    <i class="fas fa-external-link-alt"></i> Buka di Tab Baru Browser (Jika kedua link gagal)
+                </a>
             </div>
         </div>
         
         <!-- Iframe Container -->
-        <div class="flex-1 bg-gray-100 relative w-full h-full">
+        <div class="flex-1 bg-gray-100 relative w-full h-full overflow-hidden">
             <div id="game-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-white z-10">
                 <div class="loader border-indigo-200 border-t-indigo-600 w-12 h-12 mb-3"></div>
-                <p class="text-gray-500 text-sm mb-4">Memuat aplikasi...</p>
-                
-                <!-- Pesan Bantuan jika loading macet -->
-                <div class="bg-yellow-50 border border-yellow-200 p-3 rounded-lg text-center max-w-xs">
-                    <p class="text-xs text-yellow-800">
-                        Jika layar tetap putih, coba klik tombol <strong>"Layar Penuh"</strong> atau <strong>"Ganti Server"</strong> di atas.
-                    </p>
-                </div>
+                <p class="text-gray-500 text-sm animate-pulse">Memuat materi...</p>
             </div>
-            
             <iframe id="game-frame" class="w-full h-full border-0" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals" onload="hideGameLoader()"></iframe>
         </div>
     </div>
@@ -435,7 +452,6 @@
         const scriptURL = 'https://script.google.com/macros/s/AKfycbyO2JuU8h6JtNq1Tbcget2pqz8BtSbj-g7SOvB3v7OjhsasX551S_TCxL5gGis2tSHQaw/exec'; 
         
         // --- MENU ITEMS KONFIGURASI ---
-        // Anda bisa menambahkan 'altUrl' disini untuk link cadangan
         const menuItems = [
             { 
                 id: 2, 
@@ -446,7 +462,7 @@
                 bg: "bg-blue-50", 
                 text: "text-blue-600", 
                 url: "https://script.google.com/macros/s/AKfycbwO1xRFTwbwteijgB01zjWMzzmZ7ZbMZLeyMhEgvSB6RC34r1AN9sOpCaqbAHSEzsHl/exec",
-                altUrl: "https://script.google.com/a/~/macros/s/AKfycbwO1xRFTwbwteijgB01zjWMzzmZ7ZbMZLeyMhEgvSB6RC34r1AN9sOpCaqbAHSEzsHl/exec" // ISI LINK ALTERNATIF DISINI
+                altUrl: "https://script.google.com/macros/s/AKfycbwO1xRFTwbwteijgB01zjWMzzmZ7ZbMZLeyMhEgvSB6RC34r1AN9sOpCaqbAHSEzsHl/exec" // CONTOH LINK ALTERNATIF SAMA (GANTI DENGAN YANG BEDA)
             },
             { 
                 id: 3, 
@@ -457,7 +473,7 @@
                 bg: "bg-orange-50", 
                 text: "text-orange-600", 
                 url: "https://script.google.com/macros/s/AKfycbyrTSXJluCIDliCyr6mOMIBQaENndwzDt6zuk7WBhutkQ0cxANdkH3-FO7I_d-gc2FPgg/exec",
-                altUrl: "https://script.google.com/a/~/macros/s/AKfycbyrTSXJluCIDliCyr6mOMIBQaENndwzDt6zuk7WBhutkQ0cxANdkH3-FO7I_d-gc2FPgg/exec" // ISI LINK ALTERNATIF DISINI
+                altUrl: "https://script.google.com/macros/s/AKfycbyrTSXJluCIDliCyr6mOMIBQaENndwzDt6zuk7WBhutkQ0cxANdkH3-FO7I_d-gc2FPgg/exec"
             },
             { 
                 id: 4, 
@@ -468,7 +484,7 @@
                 bg: "bg-purple-50", 
                 text: "text-purple-600", 
                 url: "https://script.google.com/macros/s/AKfycbwXsvA3LIwJiUt4TinLtOp9BfkCS4omhmi24peg0wQz-1uzK67dsLMjSDawyaktJfpMKg/exec",
-                altUrl: "https://script.google.com/a/~/macros/s/AKfycbwXsvA3LIwJiUt4TinLtOp9BfkCS4omhmi24peg0wQz-1uzK67dsLMjSDawyaktJfpMKg/exec" // ISI LINK ALTERNATIF DISINI
+                altUrl: "https://script.google.com/macros/s/AKfycbwXsvA3LIwJiUt4TinLtOp9BfkCS4omhmi24peg0wQz-1uzK67dsLMjSDawyaktJfpMKg/exec"
             },
             { 
                 id: 5, 
@@ -479,7 +495,7 @@
                 bg: "bg-pink-50", 
                 text: "text-pink-600", 
                 url: "https://script.google.com/macros/s/AKfycbwGJ9yVIiGbykizvsrwCcispO-enIY1NeZOhqieqQPFkRgySy9LtyGCJlVYstUgooAN/exec",
-                altUrl: "https://script.google.com/a/~/macros/s/AKfycbwGJ9yVIiGbykizvsrwCcispO-enIY1NeZOhqieqQPFkRgySy9LtyGCJlVYstUgooAN/exec" // ISI LINK ALTERNATIF DISINI
+                altUrl: "https://script.google.com/macros/s/AKfycbwGJ9yVIiGbykizvsrwCcispO-enIY1NeZOhqieqQPFkRgySy9LtyGCJlVYstUgooAN/exec"
             },
             { 
                 id: 6, 
@@ -489,7 +505,8 @@
                 color: "bg-yellow-500", 
                 bg: "bg-yellow-50", 
                 text: "text-yellow-600", 
-                url: "https://wartam47.github.io/balapan_mobil" 
+                url: "https://wartam47.github.io/balapan_mobil",
+                altUrl: "" // Kosongkan jika tidak ada alternatif
             }
         ];
 
@@ -529,12 +546,7 @@
         const gameFrame = document.getElementById('game-frame');
         const gameTitle = document.getElementById('game-title');
         const gameLoader = document.getElementById('game-loader');
-        const gameFallbackBtn = document.getElementById('game-fallback-btn');
-        const gameAltBtn = document.getElementById('game-alt-btn'); // Tombol Alt baru
-
-        // State untuk menyimpan URL aktif
-        let currentGameUrls = { main: '', alt: '' };
-        let isUsingAlt = false;
+        const serverControls = document.getElementById('server-controls');
 
         // Form Submission Elements
         const formSubmit = document.forms['submit-to-google-sheet'];
@@ -543,45 +555,64 @@
         const successMessage = document.getElementById('successMessage');
         const errorMessage = document.getElementById('errorMessage');
 
+        // State URL
+        let currentMainUrl = "";
+        let currentAltUrl = "";
+
         // --- LOGIKA GAME MODAL (IFRAME) ---
         function openGame(url, title, altUrl) {
-            gameModal.classList.remove('hidden');
-            gameLoader.classList.remove('hidden');
+            // Set Data
+            currentMainUrl = url;
+            currentAltUrl = altUrl;
             gameTitle.innerText = title;
             
-            // Simpan state URL
-            currentGameUrls.main = url;
-            currentGameUrls.alt = altUrl || '';
-            isUsingAlt = false;
-
-            // Load URL Utama
-            gameFrame.src = url;
-            gameFallbackBtn.href = url;
-
-            // Cek apakah ada link alternatif
+            // Show Modal
+            gameModal.classList.remove('hidden');
+            
+            // Cek Link Alternatif
             if (altUrl && altUrl.trim() !== "") {
-                gameAltBtn.classList.remove('hidden');
-                gameAltBtn.innerHTML = '<i class="fas fa-random"></i> Ganti Link Alternatif';
+                serverControls.classList.remove('hidden'); // Tampilkan Panel Kontrol
+                switchServer(1); // Default ke Server 1
             } else {
-                gameAltBtn.classList.add('hidden');
+                serverControls.classList.add('hidden'); // Sembunyikan Panel
+                
+                // Langsung load
+                gameLoader.classList.remove('hidden');
+                gameFrame.src = url;
+                document.getElementById('game-fallback-btn').href = url; // Fallback link
             }
         }
 
-        function toggleAltLink() {
-            gameLoader.classList.remove('hidden'); // Show loader again
+        function switchServer(num) {
+            const btn1 = document.getElementById('btn-server-1');
+            const btn2 = document.getElementById('btn-server-2');
+            const fallback = document.getElementById('game-fallback-btn');
             
-            if (!isUsingAlt) {
-                // Switch to Alt
-                gameFrame.src = currentGameUrls.alt;
-                gameFallbackBtn.href = currentGameUrls.alt;
-                gameAltBtn.innerHTML = '<i class="fas fa-undo"></i> Kembali ke Utama';
-                isUsingAlt = true;
+            gameLoader.classList.remove('hidden'); // Show loader saat ganti
+            
+            if (num === 1) {
+                gameFrame.src = currentMainUrl;
+                fallback.href = currentMainUrl;
+                
+                // Style Active 1
+                btn1.className = "flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-bold transition-all border-2 border-indigo-600 bg-indigo-600 text-white shadow-md";
+                btn1.querySelector('span').className = "w-5 h-5 rounded-full bg-white text-indigo-600 flex items-center justify-center text-xs";
+                
+                // Style Inactive 2
+                btn2.className = "flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-bold transition-all border-2 border-gray-200 bg-white text-gray-500 hover:bg-gray-50";
+                btn2.querySelector('span').className = "w-5 h-5 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-xs";
+                
             } else {
-                // Switch back to Main
-                gameFrame.src = currentGameUrls.main;
-                gameFallbackBtn.href = currentGameUrls.main;
-                gameAltBtn.innerHTML = '<i class="fas fa-random"></i> Ganti Link Alternatif';
-                isUsingAlt = false;
+                gameFrame.src = currentAltUrl;
+                fallback.href = currentAltUrl;
+                
+                // Style Inactive 1
+                btn1.className = "flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-bold transition-all border-2 border-gray-200 bg-white text-gray-500 hover:bg-gray-50";
+                btn1.querySelector('span').className = "w-5 h-5 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-xs";
+                
+                // Style Active 2
+                btn2.className = "flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-bold transition-all border-2 border-orange-500 bg-orange-500 text-white shadow-md";
+                btn2.querySelector('span').className = "w-5 h-5 rounded-full bg-white text-orange-500 flex items-center justify-center text-xs";
             }
         }
 
@@ -591,6 +622,7 @@
         }
 
         function hideGameLoader() {
+            // Hilangkan loader setelah 1.5 detik (estimasi)
             setTimeout(() => {
                 gameLoader.classList.add('hidden');
             }, 1500); 
