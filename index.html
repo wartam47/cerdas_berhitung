@@ -240,7 +240,7 @@
         </div>
         
         <div class="bg-gray-50 p-4 text-center border-t border-gray-100 relative z-10">
-            <p class="text-xs text-gray-400">@ Wartam - SMPN 4 Majenang</p>
+            <p class="text-xs text-gray-400">@ Wartam</p>
         </div>
     </div>
 
@@ -256,7 +256,7 @@
                 <div>
                     <!-- ID DITAMBAHKAN DISINI UNTUK GANTI NAMA -->
                     <h2 id="greeting-text" class="text-xl font-bold text-gray-800">Halo, Pelajar!</h2>
-                    <p class="text-sm text-gray-500">Silakan pilih menu yang ada</p>
+                    <p class="text-sm text-gray-500">Silakan pilih menu yang ada. Jika ada 2 link pilih satu link yang tersedia</p>
                 </div>
             </div>
             <button onclick="logout()" class="px-4 py-2 bg-red-50 text-red-500 hover:bg-red-100 rounded-lg text-sm font-bold transition-colors">
@@ -386,60 +386,36 @@
         </div>
     </div>
 
-    <!-- MODAL POPUP GAMES (IFRAME) - REDESAIN PANEL KONTROL -->
+    <!-- MODAL POPUP GAMES (IFRAME) - DISEDERHANAKAN -->
     <div id="game-modal" class="fixed inset-0 modal-overlay hidden flex flex-col z-[100] fade-in">
-        
         <!-- Header Game Modal -->
-        <div class="bg-indigo-600 text-white p-4 flex justify-between items-center shadow-lg shrink-0 z-20">
-            <div class="flex items-center gap-3 overflow-hidden">
-                <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
-                    <i class="fas fa-book-open text-sm"></i>
-                </div>
-                <h3 id="game-title" class="font-bold text-lg truncate">Materi Belajar</h3>
-            </div>
-            <button onclick="closeGameModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-red-500 hover:bg-red-600 text-white transition-colors shadow-md">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-
-        <!-- PANEL KONTROL SERVER DAN SOLUSI (BARU) -->
-        <div id="server-controls" class="bg-white border-b border-gray-200 p-3 shadow-sm z-10 hidden">
-            
-            <!-- Keterangan Solusi -->
-            <div class="flex items-start gap-2 mb-3 bg-blue-50 border border-blue-100 text-blue-800 p-2 rounded-lg text-xs">
-                <i class="fas fa-info-circle mt-0.5 text-blue-500"></i>
-                <p><strong>Tips Akses:</strong> Jika <strong>Link 1 (Utama)</strong> bermasalah atau layar putih, silakan klik tombol <strong>Link 2 (Alternatif)</strong> di bawah ini.</p>
-            </div>
-
-            <!-- Tombol Switcher Server -->
-            <div class="flex gap-2">
-                <!-- Tombol Server 1 (Default Aktif) -->
-                <button id="btn-server-1" onclick="switchServer(1)" class="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-bold transition-all border-2 border-indigo-600 bg-indigo-600 text-white shadow-md">
-                    <span class="w-5 h-5 rounded-full bg-white text-indigo-600 flex items-center justify-center text-xs">1</span>
-                    Link Utama
-                </button>
-                
-                <!-- Tombol Server 2 -->
-                <button id="btn-server-2" onclick="switchServer(2)" class="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-bold transition-all border-2 border-gray-200 bg-white text-gray-500 hover:bg-gray-50">
-                    <span class="w-5 h-5 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-xs">2</span>
-                    Link Alternatif
-                </button>
-            </div>
-            
-            <!-- Link Tab Baru (Backup Terakhir) -->
-            <div class="mt-2 text-center">
-                <a id="game-fallback-btn" href="#" target="_blank" class="inline-flex items-center gap-1 text-xs text-gray-400 hover:text-indigo-600 transition-colors underline">
-                    <i class="fas fa-external-link-alt"></i> Buka di Tab Baru Browser (Jika kedua link gagal)
+        <div class="bg-indigo-600 text-white p-3 flex justify-between items-center shadow-md shrink-0">
+            <h3 id="game-title" class="font-bold text-lg truncate px-2">Materi Belajar</h3>
+            <div class="flex items-center gap-2">
+                <!-- TOMBOL TAB BARU -->
+                <a id="game-fallback-btn" href="#" target="_blank" class="text-sm font-bold bg-yellow-400 hover:bg-yellow-500 text-indigo-900 px-4 py-2 rounded-lg transition-colors flex items-center gap-2 shadow-sm">
+                    <i class="fas fa-external-link-alt"></i> Buka Layar Penuh
                 </a>
+                <button onclick="closeGameModal()" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white transition-colors ml-2">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
             </div>
         </div>
         
         <!-- Iframe Container -->
-        <div class="flex-1 bg-gray-100 relative w-full h-full overflow-hidden">
+        <div class="flex-1 bg-gray-100 relative w-full h-full">
             <div id="game-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-white z-10">
                 <div class="loader border-indigo-200 border-t-indigo-600 w-12 h-12 mb-3"></div>
-                <p class="text-gray-500 text-sm animate-pulse">Memuat materi...</p>
+                <p class="text-gray-500 text-sm mb-4">Memuat aplikasi...</p>
+                
+                <!-- Pesan Bantuan jika loading macet -->
+                <div class="bg-yellow-50 border border-yellow-200 p-3 rounded-lg text-center max-w-xs">
+                    <p class="text-xs text-yellow-800">
+                        Jika layar tetap putih atau muncul error, klik tombol <strong>"Buka Layar Penuh"</strong> di pojok kanan atas.
+                    </p>
+                </div>
             </div>
+            
             <iframe id="game-frame" class="w-full h-full border-0" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals" onload="hideGameLoader()"></iframe>
         </div>
     </div>
@@ -451,7 +427,6 @@
         const APP_ACCESS_CODE = 'hitung12345'; 
         const scriptURL = 'https://script.google.com/macros/s/AKfycbyO2JuU8h6JtNq1Tbcget2pqz8BtSbj-g7SOvB3v7OjhsasX551S_TCxL5gGis2tSHQaw/exec'; 
         
-        // --- MENU ITEMS KONFIGURASI ---
         const menuItems = [
             { 
                 id: 2, 
@@ -462,7 +437,7 @@
                 bg: "bg-blue-50", 
                 text: "text-blue-600", 
                 url: "https://script.google.com/macros/s/AKfycbwO1xRFTwbwteijgB01zjWMzzmZ7ZbMZLeyMhEgvSB6RC34r1AN9sOpCaqbAHSEzsHl/exec",
-                altUrl: "https://script.google.com/a/~/macros/s/AKfycbwO1xRFTwbwteijgB01zjWMzzmZ7ZbMZLeyMhEgvSB6RC34r1AN9sOpCaqbAHSEzsHl/exec" // CONTOH LINK ALTERNATIF SAMA (GANTI DENGAN YANG BEDA)
+                altUrl: "https://script.google.com/a/~/macros/s/AKfycbwO1xRFTwbwteijgB01zjWMzzmZ7ZbMZLeyMhEgvSB6RC34r1AN9sOpCaqbAHSEzsHl/exec" // CONTOH ALT SAMA, GANTI DENGAN YANG BEDA
             },
             { 
                 id: 3, 
@@ -506,7 +481,7 @@
                 bg: "bg-yellow-50", 
                 text: "text-yellow-600", 
                 url: "https://wartam47.github.io/balapan_mobil",
-                altUrl: "" // Kosongkan jika tidak ada alternatif
+                altUrl: "" // Kosongkan untuk menampilkan satu tombol saja
             }
         ];
 
@@ -546,7 +521,7 @@
         const gameFrame = document.getElementById('game-frame');
         const gameTitle = document.getElementById('game-title');
         const gameLoader = document.getElementById('game-loader');
-        const serverControls = document.getElementById('server-controls');
+        const gameFallbackBtn = document.getElementById('game-fallback-btn');
 
         // Form Submission Elements
         const formSubmit = document.forms['submit-to-google-sheet'];
@@ -555,65 +530,13 @@
         const successMessage = document.getElementById('successMessage');
         const errorMessage = document.getElementById('errorMessage');
 
-        // State URL
-        let currentMainUrl = "";
-        let currentAltUrl = "";
-
         // --- LOGIKA GAME MODAL (IFRAME) ---
-        function openGame(url, title, altUrl) {
-            // Set Data
-            currentMainUrl = url;
-            currentAltUrl = altUrl;
-            gameTitle.innerText = title;
-            
-            // Show Modal
+        function openGame(url, title) {
             gameModal.classList.remove('hidden');
-            
-            // Cek Link Alternatif
-            if (altUrl && altUrl.trim() !== "") {
-                serverControls.classList.remove('hidden'); // Tampilkan Panel Kontrol
-                switchServer(1); // Default ke Server 1
-            } else {
-                serverControls.classList.add('hidden'); // Sembunyikan Panel
-                
-                // Langsung load
-                gameLoader.classList.remove('hidden');
-                gameFrame.src = url;
-                document.getElementById('game-fallback-btn').href = url; // Fallback link
-            }
-        }
-
-        function switchServer(num) {
-            const btn1 = document.getElementById('btn-server-1');
-            const btn2 = document.getElementById('btn-server-2');
-            const fallback = document.getElementById('game-fallback-btn');
-            
-            gameLoader.classList.remove('hidden'); // Show loader saat ganti
-            
-            if (num === 1) {
-                gameFrame.src = currentMainUrl;
-                fallback.href = currentMainUrl;
-                
-                // Style Active 1
-                btn1.className = "flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-bold transition-all border-2 border-indigo-600 bg-indigo-600 text-white shadow-md";
-                btn1.querySelector('span').className = "w-5 h-5 rounded-full bg-white text-indigo-600 flex items-center justify-center text-xs";
-                
-                // Style Inactive 2
-                btn2.className = "flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-bold transition-all border-2 border-gray-200 bg-white text-gray-500 hover:bg-gray-50";
-                btn2.querySelector('span').className = "w-5 h-5 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-xs";
-                
-            } else {
-                gameFrame.src = currentAltUrl;
-                fallback.href = currentAltUrl;
-                
-                // Style Inactive 1
-                btn1.className = "flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-bold transition-all border-2 border-gray-200 bg-white text-gray-500 hover:bg-gray-50";
-                btn1.querySelector('span').className = "w-5 h-5 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-xs";
-                
-                // Style Active 2
-                btn2.className = "flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-bold transition-all border-2 border-orange-500 bg-orange-500 text-white shadow-md";
-                btn2.querySelector('span').className = "w-5 h-5 rounded-full bg-white text-orange-500 flex items-center justify-center text-xs";
-            }
+            gameLoader.classList.remove('hidden'); // Show loader
+            gameTitle.innerText = title;
+            gameFrame.src = url;
+            gameFallbackBtn.href = url;
         }
 
         function closeGameModal() {
@@ -622,7 +545,6 @@
         }
 
         function hideGameLoader() {
-            // Hilangkan loader setelah 1.5 detik (estimasi)
             setTimeout(() => {
                 gameLoader.classList.add('hidden');
             }, 1500); 
@@ -830,19 +752,50 @@
             const grid = document.getElementById('menu-grid');
             grid.innerHTML = '';
             menuItems.forEach(item => {
-                // Diubah menjadi button yang memanggil openGame() dengan parameter altUrl
                 const card = document.createElement('div');
-                card.onclick = () => openGame(item.url, item.title, item.altUrl);
-                card.className = `cursor-pointer block ${item.bg} border border-transparent hover:border-${item.text.split('-')[1]}-200 rounded-2xl p-6 transition-all hover:-translate-y-1 hover:shadow-lg group`;
-                card.innerHTML = `
-                    <div class="flex items-start justify-between mb-4">
-                        <div class="w-12 h-12 ${item.color} rounded-xl flex items-center justify-center text-white text-xl shadow-md group-hover:scale-110 transition-transform">
-                            <i class="fas ${item.icon}"></i>
+                card.className = `block ${item.bg} border border-transparent hover:border-${item.text.split('-')[1]}-200 rounded-2xl p-6 transition-all hover:-translate-y-1 hover:shadow-lg group flex flex-col h-full`;
+
+                // Logika Tombol
+                let actionButtons = '';
+                // Mengambil warna dasar (blue, orange, dll)
+                const baseColor = item.text.split('-')[1]; 
+
+                if (item.altUrl && item.altUrl !== "") {
+                    // Jika ada Alt URL (Penjumlahan s/d Pembagian) -> 2 Tombol
+                    actionButtons = `
+                        <div class="mt-4 grid grid-cols-2 gap-2">
+                            <!-- Link 1: Background diubah dari putih menjadi warna-100 -->
+                            <button onclick="openGame('${item.url}', '${item.title} - Server 1')" class="py-2 px-3 bg-${baseColor}-100 text-${baseColor}-700 border border-${baseColor}-200 rounded-lg text-sm font-bold hover:bg-${baseColor}-200 transition-colors shadow-sm">
+                                Link 1
+                            </button>
+                            <!-- Link 2: Tetap warna solid -->
+                            <button onclick="openGame('${item.altUrl}', '${item.title} - Server 2')" class="py-2 px-3 bg-${baseColor}-600 text-white rounded-lg text-sm font-bold hover:bg-${baseColor}-700 transition-colors shadow-sm">
+                                Link 2
+                            </button>
                         </div>
-                        <i class="fas fa-play-circle text-gray-300 group-hover:${item.text} text-xl"></i>
+                    `;
+                } else {
+                    // Jika tidak ada Alt URL (Kompetisi) -> 1 Tombol
+                    actionButtons = `
+                        <div class="mt-4">
+                            <button onclick="openGame('${item.url}', '${item.title}')" class="w-full py-2 px-3 bg-${baseColor}-600 text-white rounded-lg text-sm font-bold hover:bg-${baseColor}-700 transition-colors shadow-sm flex items-center justify-center gap-2">
+                                <i class="fas fa-play"></i> Mulai
+                            </button>
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="flex-1">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="w-12 h-12 ${item.color} rounded-xl flex items-center justify-center text-white text-xl shadow-md group-hover:scale-110 transition-transform">
+                                <i class="fas ${item.icon}"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-1">${item.title}</h3>
+                        <p class="text-sm text-gray-500">${item.desc}</p>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-1">${item.title}</h3>
-                    <p class="text-sm text-gray-500">${item.desc}</p>
+                    ${actionButtons}
                 `;
                 grid.appendChild(card);
             });
@@ -954,4 +907,3 @@
     </script>
 </body>
 </html>
-
